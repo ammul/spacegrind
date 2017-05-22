@@ -1,0 +1,191 @@
+body{
+	background: black;
+}
+
+#tabwrapper{
+	margin: auto;
+    border: 1px solid white;
+    position: absolute;
+    bottom: 20px;
+    width: 98%;
+}
+
+div.tab button.tablinks{
+    background-color: #2d2d2d;
+    color: white;
+    border: 1px solid white;
+}
+
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+div.tab button.active {
+    background-color: purple;
+}
+
+.toolTipBox{
+	width: 98%;
+	height: 200px;
+	border: 1px solid gray;
+	margin: auto;
+	position: absolute;
+	bottom: 10px;
+}
+
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    color: white;
+    height: 300px;
+    margin-top: 60px;
+}
+
+.tabcontent button{
+	width: 100px;
+	height: 50px;
+	background-color: #2d2d2d;
+	color: white;
+	border: 1px solid white;
+	font-family: arial;
+	font-size: 17px;
+	cursor: pointer;
+}
+
+.tabcontent button:hover{
+    background-color: #ddd;	
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.prices{
+	visibility: hidden;
+    padding: 10px;
+    font-weight: bold;
+    font-family: arial;	
+}
+
+.tooltiptext {
+    visibility: hidden;
+    padding: 10px;
+    font-family: arial;
+}
+
+.tooltip:hover ~ .toolTipBox .tooltiptext{
+    visibility: visible;
+}
+
+.tooltip:hover ~ .toolTipBox .prices {
+    visibility: visible;
+}
+
+
+#space{
+	margin:auto;
+	width: 500px;
+	height: 500px;
+	border: 1px solid white;
+	background: black;
+	position: relative;
+}
+
+#controls{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	padding: 10px;
+	margin: 10px;
+	width: 200px;
+	height: 500px;
+	border: 1px solid white;
+}
+
+#controls button{
+	width: 80%;
+	height: 40px;
+}
+
+.star{
+	width: 1px;
+	height: 1px;
+	background: white;
+}
+
+#resources{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	padding: 10px;
+	margin: 10px;
+	width: 200px;
+	height: 500px;
+	border: 1px solid white;
+}
+
+.hyperdust{
+	color: purple;
+}
+
+.iron{
+	color: brown;
+}
+
+.techparts{
+	color: gray;
+}
+
+.energy{
+	color: yellow;
+}
+
+#ship{
+	background-image: url("img/ship.png");
+	width: 94px;
+	height: 94px;
+	position: absolute;
+	left: 201px;
+	top: 201px;
+}
+
+.asteroid{
+	background-image: url("img/asteroid.png");
+	position: absolute;
+	width: 64px;
+	height: 64px;
+	cursor: pointer; 
+}
+
+.rubble{
+	background-image: url("img/rubble.png");
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	cursor: pointer;
+}
+
+.rescuecapsule{
+	background-image: url("img/capsule.png");
+	position: absolute;
+	width: 37px;
+	height: 37px;
+	cursor: pointer;
+}
+
+.crewslot{
+	
+}

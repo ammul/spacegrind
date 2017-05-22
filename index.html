@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script src="jquery-3.2.1.min.js"></script>
+	<script src="main.js"></script>
+</head>
+<body>
+
+	<div id="controls">
+
+		<button id="modeButton" onclick="toggleMode()">Toggle</button>
+
+	</div>
+
+	<div id="space">
+
+		<div id="ship"></div>
+
+	</div>
+
+	<div id="tabwrapper">
+		<div class="tab">
+			<button class="tablinks" onclick="openTab(event, 'upgrades')" id="defaultOpen">Upgrades</button>
+			<button class="tablinks" onclick="openTab(event, 'research')">Research</button>
+			<button class="tablinks" onclick="openTab(event, 'hyperbeasts')">Hyperbeasts</button>
+			<button class="tablinks" onclick="openTab(event, 'crew')">Crew</button>
+		</div>
+
+		<div id="upgrades" class="tabcontent">
+			
+						<button class="tooltip" id="tech-mining" onclick="purchaseTech('mining')" onmouseover="showTooltip('mining')">
+				Mining
+			</button>
+			<button class="tooltip" id="tech-hyperdust" onclick="purchaseTech('hyperdrive')" onmouseover="showTooltip('hyperdrive')">
+				Hyperdrive
+			</button>
+			<button class="tooltip" id="tech-lasermining" onclick="purchaseTech('lasermining')" onmouseover="showTooltip('lasermining')">
+				Laser Mining
+			</button>
+
+			<div class="toolTipBox">
+				<div class="prices">
+					<div class="hyperdust"></div>
+					<div class="iron"></div>
+					<div class="techparts"></div>
+				</div>
+				<div class="tooltiptext">456</div>
+			</div>
+
+		</div>
+
+		<div id="research" class="tabcontent">
+			Research...
+		</div>
+
+		<div id="hyperbeasts" class="tabcontent">
+			Hyperbeasts...
+		</div>		
+
+		<div id="crew" class="tabcontent">
+			<div class="crewslot" id="crew1"></div>
+		</div>
+
+	</div>
+
+
+
+	<div id="resources">
+
+		<p class="hyperdust"></p>
+		<p class="iron"></p>
+		<p class="techparts"></p>
+		<p class="energy"></p>
+
+	</div>
+
+</body>
+</html> 
