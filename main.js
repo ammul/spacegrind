@@ -4,20 +4,20 @@ var options = {
 }
 
 var resources = {
-	stars: 0,
-	hyperdust: {
+	// stars: 0,
+	'hyperdust': {
 		stored: 0,
 		baseValuePerSecond: 0.005
 	},
-	iron: {
+	'iron': {
 		stored: 0,
 		baseValuePerSecond: 0
 	},
-	techparts: {
+	'techparts': {
 		stored: 0,
 		baseValuePerSecond: 0
 	},
-	energy: {
+	'energy': {
 		stored: 0,
 		baseValuePerSecond: 0
 	}
@@ -44,7 +44,7 @@ var encounters = {
 		max: 1
 	},
 	rescuecapsule : {
-		spawnProbabilityPerTick: 0.1,
+		spawnProbabilityPerTick: 0.001,
 		min: 1,
 		max: 1
 	}
@@ -71,13 +71,39 @@ var techs = {
 
 var researchedTechs=[];
 
-var stars=[];
-var asteroids=[];
-var rubbles=[];
-var rescuecapsules=[];
+var objects = {
+	'star': {
+		'identifier': 'star',
+		'current': [],
+		'height': 1,
+		'width': 1
+	},
+	'asteroid': {
+		'identifier':'asteroid',
+		'current': [],
+		'height': 64,
+		'width' : 64
+	},
+	'rubble':{
+		'identifier': 'rubble',
+		'current': [],
+		'height': 32,
+		'width': 32
+	},
+	'rescuecapsule':{
+		'identifier': 'rescuecapsule',
+		'current': [],
+		'height': 37,
+		'width': 37
+	}
+}
+
 var crew=[];
 
 function toggleMode(){
+
+	console.log(objects);
+
 	options.mode = options.mode == "MODE_IDLE" ? "MODE_ACTIVE" : "MODE_IDLE";
 	$('#modeButton').text(options.mode);
 
@@ -112,93 +138,23 @@ function addResource(resource,value){
 
 function graphicsLoop(){
 
-	for(var i=0;i<100;i++){
-		if(resources.stars<100){
-			addStar();
-			resources.stars++;
+	for(var i=0;i<100;i++){ 	
+		if(objects['star']['current'].length<100){
+			spawn(objects['star']);
 		}
-
-		moveStar(i);
-
 	}
 
-	for(var i=0;i<asteroids.length;i++){
-
-		moveAsteroid(asteroids[i]);
-
-	}
-
-	for(var i=0;i<rubbles.length;i++){
-
-		moveRubble(rubbles[i]);
-
-	}
-
-	for(var i=0;i<rescuecapsules.length;i++){
-
-		moveResuceCapsule(rescuecapsules[i]);
-
-	}		
-	
-
-}
-
-function addStar(){
-
-	var x = Math.floor((Math.random() * 500) + 1);
-	var y= Math.floor((Math.random() * 500) + 1);
-
-	id="star"+resources.stars;
-
-	$('#space').append("<div id='"+id+"'' class='star' style='position: absolute; top:"+y+"px; left:"+x+"px;'></div>");
-
-	return id;
-}
-
-function moveStar(star){
-
-	var currentPos = $('#star'+star).css("left");
-
-	if(options.mode=="MODE_ACTIVE"){
-		$('#star'+star).css('left', '-=' + 1 );
-
-		if($('#star'+star).css("width").split("px")[0]>1){
-			$('#star'+star).css('width', '-=' + 1 );
-		} 
-
-		if(currentPos=="0px"){
-			$('#star'+star).css('left', '500px' ); 
-			$('#star'+star).css('top', Math.floor((Math.random() * 500) + 1) + 'px' ); 
-		}
-
-	}
-
-	if(options.mode=="MODE_IDLE"){
-
-		if(currentPos=="0px"){
-
-			if($('#star'+star).css("width").split("px")[0]>1){
-				$('#star'+star).css('width', '-=' + 1 );
+	for(var i=0;i<Object.keys(objects).length;i++){
+		for(var j=0;j<objects[Object.keys(objects)[i]]['current'].length;j++){
+			if(objects[Object.keys(objects)[i]].identifier=='star'){
+				moveStar(objects['star'].current[j]);
 			}else{
-				$('#star'+star).css('left', '500px' ); 
-				$('#star'+star).css('top', Math.floor((Math.random() * 500) + 1) + 'px' ); 
+				move(objects[Object.keys(objects)[i]].current[j]);
 			}
-
-		}else{
-
-			$('#star'+star).css('left', '-=' + 1 );
-
-			if( $('#star'+star).css("width").split("px")[0]<=20){
-
-				$('#star'+star).css('width', '+=' + 1 );
-
-			}
-
 		}
+	}	
 
-	}
-
-};
+}
 
 $( document ).ready(function() {
 	setInterval(function(){
@@ -241,154 +197,156 @@ function activeEncounters() {
 	
 	var rand = Math.floor((Math.random() * 1000) + 1)/1000;
 	if(encounters['asteroid'].spawnProbabilityPerTick>rand){
-		spawnAsteroid();
+		spawn(objects['asteroid']);
 	}
 	if(encounters['rubble'].spawnProbabilityPerTick>rand){
-		spawnRubble();
+		spawn(objects['rubble']);
 	}
 	if(encounters['rescuecapsule'].spawnProbabilityPerTick>rand){
-		spawnResuceCapsule();
+		spawn(objects['rescuecapsule']);
 	}
 
 }
 
-function spawnAsteroid(){
+function spawn(object){
 
-	var y= Math.floor((Math.random() * 436) + 1);
-
-	var id="asteroid"+asteroids.length;
-	asteroids.push(id);
-
-	$('#space').append("<div id='"+id+"' class='asteroid' style='position: absolute; top:"+y+"px; left: 436px;' onclick='harvestAsteroid("+id+")'></div>");
-
+	var y = Math.floor((Math.random()* (500 - object.height))+1);
+	var id=object.identifier+objects[object.identifier].current.length;
+	objects[object.identifier]['current'].push(id);
+	$('#space').append(getHTML(object,y,id));
 
 }
 
-function moveAsteroid(asteroid){
+function move(object){
 
-	$('#'+asteroid).css('left', '-=' + 1 );
-	if($('#'+asteroid).css('left').split("px")[0]<=0){
-		$('#'+asteroid).remove();
-		var pos = asteroids.indexOf(asteroid);
+	var identifier = getIdentifier(object);
+
+	$('#'+object).css('left', '-=' + 1 );
+	if($('#'+object).css('left').split("px")[0]<=0){
+		$('#'+object).remove();
+		var pos = objects[identifier].current.indexOf(object);
 		if (pos > -1) {
-			asteroids.splice(pos, 1);
+			objects[identifier].current.splice(pos, 1);
 		}
 	}
 
 }
 
-function harvestAsteroid(asteroid){
+function getIdentifier(object){
+	
+	var filter = /([a-z]+)\d*/;
+	
+	try{
+		return object.match(filter)[1];
+	}catch(error){
+		console.error("unable to filter object '"+object+"'");
+	}	
 
-	if(researchedTechs.indexOf("mining")<0)return;
+}
 
-	$('#'+asteroid.id).remove();
-	var pos = asteroids.indexOf(asteroid.id);
-	if (pos > -1) {
-		asteroids.splice(pos, 1);
+function harvest(object){
+
+	var identifier = getIdentifier(object.id);
+
+	switch(identifier){
+		case 'asteroid':
+			if(researchedTechs.indexOf("mining")<0)return;
+			var resource=iron;
+		break;
+		case 'rubble':
+		var resource = "techparts";
+		break;
+		case 'rescuecapsule':
+
+		break;
 	}
 
-	var earned = Math.floor((Math.random() * encounters['asteroid'].max) + encounters['asteroid'].min);	
+	$('#'+object.id).remove();
+	var pos = objects[identifier].current.indexOf(object.id);
+	if (pos > -1) {
+		objects[identifier].current.splice(pos, 1);
+	}
 
-	addResource("iron",earned);
-
-}
-
-function spawnRubble(){
-
-	var y= Math.floor((Math.random() * 468) + 1);
-
-	var id="rubble"+rubbles.length;
-	rubbles.push(id);
-
-	$('#space').append("<div id='"+id+"' class='rubble' style='position: absolute; top:"+y+"px; left: 468px;' onclick='harvestRubble("+id+")'></div>");
-
+	var earned = Math.floor((Math.random() * encounters[identifier].max) + encounters[identifier].min);	
+	addResource(resource,earned);
 
 }
 
-function moveRubble(rubble){
+function moveStar(star){
 
-	$('#'+rubble).css('left', '-=' + 1 );
-	if($('#'+rubble).css('left').split("px")[0]<=0){
-		$('#'+rubble).remove();
-		var pos = rubbles.indexOf(rubble);
-		if (pos > -1) {
-			rubbles.splice(pos, 1);
+	var currentPos = $('#'+star).css("left");
+
+	if(options.mode=="MODE_ACTIVE"){
+		$('#'+star).css('left', '-=' + 1 );
+
+		if($('#'+star).css("width").split("px")[0]>1){
+			$('#'+star).css('width', '-=' + 1 );
+		} 
+
+		if(currentPos=="0px"){
+			$('#'+star).css('left', '500px' ); 
+			$('#'+star).css('top', Math.floor((Math.random() * 500) + 1) + 'px' ); 
 		}
+
 	}
 
-}
+	if(options.mode=="MODE_IDLE"){
 
-function harvestRubble(rubble){
+		if(currentPos=="0px"){
 
-	$('#'+rubble.id).remove();
-	var pos = rubbles.indexOf(rubble.id);
-	if (pos > -1) {
-		rubbles.splice(pos, 1);
-	}
+			if($('#'+star).css("width").split("px")[0]>1){
+				$('#'+star).css('width', '-=' + 1 );
+			}else{
+				$('#'+star).css('left', '500px' ); 
+				$('#'+star).css('top', Math.floor((Math.random() * 500) + 1) + 'px' ); 
+			}
 
-	var earned = Math.floor((Math.random() * encounters['rubble'].max) + encounters['rubble'].min);	
+		}else{
 
-	addResource("techparts",earned);
+			$('#'+star).css('left', '-=' + 1 );
 
-}
+			if( $('#'+star).css("width").split("px")[0]<=20){
 
-function spawnResuceCapsule(){
+				$('#'+star).css('width', '+=' + 1 );
 
-	var y= Math.floor((Math.random() * 463) + 1);
+			}
 
-	var id="rescuecapsule"+rubbles.length;
-	rubbles.push(id);
-
-	$('#space').append("<div id='"+id+"' class='rescuecapsule' style='position: absolute; top:"+y+"px; left: 463px;' onclick='harvestResuceCapsule("+id+")'></div>");
-
-
-}
-
-function moveResuceCapsule(capsule){
-
-	$('#'+capsule).css('left', '-=' + 1 );
-	if($('#'+capsule).css('left').split("px")[0]<=0){
-		$('#'+capsule).remove();
-		var pos = rubbles.indexOf(capsule);
-		if (pos > -1) {
-			capsule.splice(pos, 1);
 		}
+
 	}
 
-}
+};
 
-function harvestResuceCapsule(capsule){
-
-	$('#'+capsule.id).remove();
-	var pos = rubbles.indexOf(capsule.id);
-	if (pos > -1) {
-		rubbles.splice(pos, 1);
+function getHTML(object,y,id){
+	switch(object.identifier){
+		case 'star':
+			var x = Math.floor((Math.random() * 500) + 1);
+			return "<div id='"+id+"' class='star' style='position: absolute; top:"+y+"px; left: "+x+"px;'></div>";
+		break;
+		case 'asteroid':
+			return "<div id='"+id+"' class='asteroid' style='position: absolute; top:"+y+"px; left: 436px;' onclick='harvest("+id+")'></div>";
+		break;
+		case 'rubble':
+			return "<div id='"+id+"' class='rubble' style='position: absolute; top:"+y+"px; left: 468px;' onclick='harvest("+id+")'></div>";
+		break;
+		case 'rescuecapsule':
+			return "<div id='"+id+"' class='rescuecapsule' style='position: absolute; top:"+y+"px; left: 463px;' onclick='harvest("+id+")'></div>";
+		break;
 	}
-
-	var earned = Math.floor((Math.random() * encounters['rescuecapsule'].max) + encounters['rescuecapsule'].min);	
-
-	var member = newCrewMember();
-	console.log("adding crewMember",member);
 }
-
 
 function destroyAllIdleObjects(){
 
-	for(var i=0;i<asteroids.length;i++){
-		$('#'+asteroids[i]).remove();
-		var pos = asteroids.indexOf(asteroids[i]);
-		if (pos > -1) {
-			asteroids.splice(pos, 1);
+	for(var i=0;i<Object.keys(objects).length;i++){
+		var currentObject = objects[Object.keys(objects)[i]];
+		for(var j=0;j<currentObject.current.length;j++){
+			$('#'+currentObject.current[j]).remove();
+			var pos = currentObject.current.indexOf(currentObject.current[j]);
+			if (pos > -1) {
+				currentObject.current.splice(pos, 1);
+			}			
 		}
 	}
-
-	for(var i=0;i<rubbles.length;i++){
-		$('#'+rubbles[i]).remove();
-		var pos = rubbles.indexOf(rubbles[i]);
-		if (pos > -1) {
-			rubbles.splice(pos, 1);
-		}
-	}		
 }
 
 function openTab(evt, tab) {
