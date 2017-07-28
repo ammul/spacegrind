@@ -57,6 +57,7 @@ var techs = {
 			iron: 0,
 			techparts: 5
 		},
+		caption: "Mining",
 		tooltip: "Allows mining iron by clicking on asteroids"
 	},
 	hyperdrive: {
@@ -65,6 +66,7 @@ var techs = {
 			iron: 500,
 			techparts: 20
 		},
+		caption: "Hyperdrive",
 		tooltip: "Unlocks the Hyperdrive. Earn hyperdust while flying in the hyperspace"
 	}
 }
@@ -99,6 +101,28 @@ var objects = {
 }
 
 var crew=[];
+
+/* init GUI */
+
+
+$(document).ready(function(){
+
+	//init Upgrades
+
+	for(var i=0;i<Object.keys(techs).length;i++){
+
+		var techName = Object.keys(techs)[i];
+		console.log(techName);
+
+		var element = "<button class='tooltip' id='tech-"+techName+"' onclick='purchaseTech(\""+techName+"\")' onmouseover='showTooltip(\""+techName+"\")'>"+techs[techName].caption+"</button>";
+		$('#upgrades').append(element);
+	}
+
+});
+
+
+
+/* end of init GUI */
 
 function toggleMode(){
 
@@ -365,25 +389,17 @@ function openTab(evt, tab) {
 
 function showTooltip(item){
 
+	console.log(item);
+
 	var toolTipText ="";
 	var hyperdust = 0;
 	var iron = 0;
 	var techparts = 0;
-
-	switch(item){
-		case 'mining':
-			toolTipText = techs[item].tooltip;
-			hyperdust = techs[item].price.hyperdust || 0;
-	 		iron = techs[item].price.iron || 0;
-	 		techparts = techs[item].price.techparts || 0;	
-		break;
-		case 'hyperdrive':
-			toolTipText = techs[item].tooltip;
-			hyperdrive = techs[item].price.hyperdrive || 0;
-	 		iron = techs[item].price.iron || 0;
-	 		techparts = techs[item].price.techparts || 0;	
-		break;
-	}
+	
+	toolTipText = techs[item].tooltip;
+	hyperdust = techs[item].price.hyperdust || 0;
+	iron = techs[item].price.iron || 0;
+	techparts = techs[item].price.techparts || 0;	
 
 	$('.tooltiptext').text(toolTipText);
 	$('.prices .hyperdust').text(hyperdust>0?hyperdust + " hyperdust":"");
